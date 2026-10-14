@@ -40,6 +40,17 @@ public class HomePageController{
        }
        return new ProductsWrapper(productService.getAllProducts());
     }
+    @GetMapping("/products/filter")
+    public ProductsWrapper filterProducts(
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "min_price", required = false) Double minPrice,
+            @RequestParam(name = "max_price", required = false) Double maxPrice,
+            @RequestParam(name = "description", required = false) String brand) {
+
+        // Pass the parameters down to your service layer to handle filtering logic
+        return new ProductsWrapper(productService.filterProducts(category, minPrice, maxPrice, brand));
+    }
+
 
    
 
