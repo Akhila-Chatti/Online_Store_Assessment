@@ -5,12 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-/**
- * @author Michael Pogrebinsky - www.topdeveloperacademy.com
- * This represents an API through which we can perform CRUD operations against the
- * Orders table in the database
- * You do not need to modify this file
- */
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
