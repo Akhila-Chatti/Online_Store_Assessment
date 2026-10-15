@@ -24,20 +24,25 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     /**
      * Returns all products in the Products table
      */
+    @Query("SELECT p FROM Product p ORDER BY p.id")
     List<Product> findAll();
 
     /**
      * Looks for a product by id in the Products table
      * @return the product that matches the given id or Optional.empty
      */
-    Optional<Product> findById(Long productId);
+    @Query("SELECT p FROM Product p WHERE p.id = :productId")
+    Optional<Product> findById(@Param("productId") Long productId);
 
     /**
      * Looks for all the products that match the given category
      */
-    List<Product> findByCategory(String productCategory);
+    @Query("SELECT p FROM Product p WHERE LOWER(p.category) = LOWER(:category) ORDER BY p.id")
+    List<Product> findByCategory(@Param("category") String productCategory);
 
-    Page<Product> findByCategory(String productCategory, Pageable pageable);
+    @Query(value = "SELECT p FROM Product p WHERE LOWER(p.category) = LOWER(:category)",
+            countQuery = "SELECT COUNT(p) FROM Product p WHERE LOWER(p.category) = LOWER(:category)")
+    Page<Product> findByCategory(@Param("category")String productCategory, Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE " +
             "(:category IS NULL OR LOWER(p.category) = LOWER(:category)) AND " +
