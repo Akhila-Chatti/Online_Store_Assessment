@@ -1,10 +1,14 @@
 package online.store.controllers;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 
+import online.store.dto.OrderDto;
+import online.store.mappers.OrderMapper;
 import online.store.mappers.ProductMapper;
 import online.store.model.wrappers.ProductsWrapper;
+import online.store.services.OrdersService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import online.store.services.ProductsService;
@@ -16,9 +20,10 @@ public class HomePageController{
     private final ProductsService productService;
     private final ProductMapper productMapper;
  
-    public HomePageController(ProductsService productService,ProductMapper productMapper) {
+    public HomePageController(ProductsService productService, ProductMapper productMapper) {
         this.productService = productService;
         this.productMapper = productMapper;
+
     }
 
 
@@ -53,6 +58,8 @@ public class HomePageController{
         return new ProductsWrapper(productMapper.toDtoList(
                 productService.filterProducts(category, minPrice, maxPrice, description)));
     }
+
+
 
 
    

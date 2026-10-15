@@ -1,6 +1,9 @@
 package online.store.controllers;
 
+import online.store.dto.OrderDto;
 import online.store.exceptions.CreditCardValidationException;
+import online.store.mappers.OrderMapper;
+import online.store.mappers.ProductMapper;
 import online.store.model.CheckoutRequest;
 import online.store.model.Order;
 import online.store.model.wrappers.ProductsWrapper;
@@ -12,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -19,12 +23,14 @@ public class CheckoutController {
     private final OrdersService ordersService;
     private final ProductsService productsService;
     private final CreditCardValidationService creditCardValidationService;
+    private final OrderMapper orderMapper;
 
     public CheckoutController(OrdersService ordersService,
-                              ProductsService productsService, CreditCardValidationService creditCardValidationService) {
+                              ProductsService productsService, CreditCardValidationService creditCardValidationService,OrderMapper orderMapper) {
         this.ordersService = ordersService;
         this.productsService = productsService;
         this.creditCardValidationService = creditCardValidationService;
+        this.orderMapper=orderMapper;
     }
 
 
@@ -68,6 +74,11 @@ public class CheckoutController {
                 .status(HttpStatus.OK)
                 .body("success");
     }
+    @GetMapping("/orders")
+    public List<OrderDto> getOrders(@RequestParam String firstName, @RequestParam String lastName) {
+        return orderMapper.toDtoList(ordersService.getOrdersByCustomer(firstName, lastName));
+    }
+
     private static boolean isNullOrBlank(String input) {
         return input == null || input.isEmpty() || input.trim().length() == 0;
     }

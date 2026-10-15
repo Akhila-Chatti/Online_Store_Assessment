@@ -5,6 +5,8 @@ import online.store.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrdersService {
 
@@ -30,5 +32,9 @@ public class OrdersService {
             throw new IllegalStateException(String.format("Number of products %d exceeded the limit of %d",
                     totalNumberOfItems, maxNumberOfItems));
         }
+    }
+
+    public List<Order> getOrdersByCustomer(String firstName, String lastName) {
+        return orderRepository.findByFirstNameAndLastName(firstName, lastName);
     }
 }
