@@ -42,5 +42,18 @@ public class ProductsService {
                 .orElseThrow(() -> new IllegalStateException(String.format("Product with id %s doesn't exist", id)));
     }
 
+    public List<Product> filterProducts(String category, Double minPrice, Double maxPrice, String description) {
+        List<Product> products = getAllProducts();
+
+        return products.stream()
+                .filter(p -> category == null || category.trim().isEmpty() ||
+                        (p.getCategory() != null && p.getCategory().equalsIgnoreCase(category)))
+                .filter(p -> minPrice == null || p.getPriceUSD() >= minPrice)
+                .filter(p -> maxPrice == null || p.getPriceUSD() <= maxPrice)
+                .filter(p -> description == null || description.trim().isEmpty() ||
+                        (p.getDescription() != null && p.getDescription().toLowerCase().contains(description.toLowerCase())))
+                .collect(Collectors.toList());
+    }
+
 
 }
