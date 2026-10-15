@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import online.store.services.ProductsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import online.store.model.wrappers.ProductsPageWrapper;
+import org.springframework.data.domain.Page;
+import online.store.model.Product;
 
 @RestController
 public class HomePageController{
@@ -40,23 +43,46 @@ public class HomePageController{
        return new ProductsWrapper(productMapper.toDtoList(productService.getDealsOfTheDay(numberOfProducts)));
     }
 
-    @GetMapping("/products")
-    public ProductsWrapper getProductByCategory(@RequestParam(name="category",required=false)String category) {
-       if(category!=null && !category.isEmpty()){
-          return new ProductsWrapper(productMapper.toDtoList(productService.getProductByCategory(category)));
-       }
-       return new ProductsWrapper(productMapper.toDtoList(productService.getAllProducts()));
-    }
-    @GetMapping("/products/filter")
-    public ProductsWrapper filterProducts(
-            @RequestParam(name = "category", required = false) String category,
-            @RequestParam(name = "min_price", required = false) Double minPrice,
-            @RequestParam(name = "max_price", required = false) Double maxPrice,
-            @RequestParam(name = "description", required = false) String description) {
+//    @GetMapping("/products")
+//    public ProductsWrapper getProductByCategory(@RequestParam(name="category",required=false)String category) {
+//       if(category!=null && !category.isEmpty()){
+//          return new ProductsWrapper(productMapper.toDtoList(productService.getProductByCategory(category)));
+//       }
+//       return new ProductsWrapper(productMapper.toDtoList(productService.getAllProducts()));
+//    }
+//    @GetMapping("/products/filter")
+//    public ProductsWrapper filterProducts(
+//            @RequestParam(name = "category", required = false) String category,
+//            @RequestParam(name = "min_price", required = false) Double minPrice,
+//            @RequestParam(name = "max_price", required = false) Double maxPrice,
+//            @RequestParam(name = "description", required = false) String description) {
+//
+//        // Pass the parameters down to your service layer to handle filtering logic
+//        return new ProductsWrapper(productMapper.toDtoList(
+//                productService.filterProducts(category, minPrice, maxPrice, description)));
+//    }
+@GetMapping("/products")
+public ProductsPageWrapper getProducts(
+        @RequestParam(name = "category", required = false) String category,
+        @RequestParam(name = "page", defaultValue = "1") int page,
+        @RequestParam(name = "limit", defaultValue = "10") int limit) {
 
-        // Pass the parameters down to your service layer to handle filtering logic
-        return new ProductsWrapper(productMapper.toDtoList(
-                productService.filterProducts(category, minPrice, maxPrice, description)));
+    Page<Product> result = productService.getProductsPage(category, page, limit);
+    return new ProductsPageWrapper(productMapper.toDtoList(result.getContent()), result);
+}
+
+    @GetMapping("/products/filter")
+    public ProductsPageWrapper filterProducts(
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "min_price", required = false) Float minPrice,
+            @RequestParam(name = "max_price", required = false) Float maxPrice,
+            @RequestParam(name = "description", required = false) String description,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "limit", defaultValue = "10") int limit) {
+
+        Page<Product> result = productService.filterProductsPage(
+                category, minPrice, maxPrice, description, page, limit);
+        return new ProductsPageWrapper(productMapper.toDtoList(result.getContent()), result);
     }
 
 
